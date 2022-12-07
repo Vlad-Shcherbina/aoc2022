@@ -1,5 +1,6 @@
 pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
-    let mut s = 0;
+    let mut part1 = 0;
+    let mut part2 = 0;
     for line in input.split_terminator('\n') {
         let mut it = line.chars();
         let first = it.next().unwrap();
@@ -17,7 +18,9 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
             2 => 0,
             _ => unreachable!()
         };
-        s += second + 1 + win_score;
+        part1 += second + 1 + win_score;
+        part2 += (first + second + 2) % 3 + 1 + second * 3;
     }
-    out(s.to_string());
+    out(part1.to_string());
+    out(part2.to_string());
 }
