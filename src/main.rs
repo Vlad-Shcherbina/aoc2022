@@ -1,5 +1,6 @@
 #![feature(fs_try_exists)]
 #![feature(iter_partition_in_place)]
+#![feature(array_chunks)]
 
 mod logger;
 mod day01;
