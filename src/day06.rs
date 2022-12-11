@@ -1,14 +1,12 @@
 pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
     let input = input.trim_end().as_bytes();
     for n in [4, 14] {
-        let mut i = n;
-        let result = loop {
+        for i in n.. {
             if all_distinct(&input[i - n .. i]) {
-                break i;
+                out(i.to_string());
+                break;
             }
-            i += 1;
-        };
-        out(result.to_string());
+        }
     }
 }
 
