@@ -11,6 +11,7 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
             }
         }
     }
+    let mut stacks2 = stacks.clone();
     for command in commands.split_terminator('\n') {
         let command = command.strip_prefix("move ").unwrap();
         let (cnt, rest) = command.split_once(" from ").unwrap();
@@ -22,8 +23,15 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
             let t = stacks[from].pop().unwrap();
             stacks[to].push(t);
         }
+        let from_stacks = &mut stacks2[from];
+        let t = from_stacks.split_off(from_stacks.len() - cnt);
+        stacks2[to].extend(t);
     }
     let result: String = stacks.iter()
+        .map(|s| *s.last().unwrap() as char)
+        .collect();
+    out(result);
+    let result: String = stacks2.iter()
         .map(|s| *s.last().unwrap() as char)
         .collect();
     out(result);
