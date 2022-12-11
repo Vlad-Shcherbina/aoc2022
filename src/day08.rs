@@ -56,4 +56,33 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
     }
     let result = visible.iter().filter(|&&b| b).count();
     out(result.to_string());
+    let mut best_scenic_score = 0;
+    for i in 1 .. height - 1 {
+        for j in 1 .. width - 1 {
+            let mut scenic_score = 1;
+            let cur_height = input[i * (width + 1) + j];
+            let mut d = 1;
+            while d < j && input[i * (width + 1) + j - d] < cur_height {
+                d += 1;
+            }
+            scenic_score *= d;
+            let mut d = 1;
+            while j + d + 1 < width && input[i * (width + 1) + j + d] < cur_height {
+                d += 1;
+            }
+            scenic_score *= d;
+            let mut d = 1;
+            while d < i && input[(i - d) * (width + 1) + j] < cur_height {
+                d += 1;
+            }
+            scenic_score *= d;
+            let mut d = 1;
+            while i + d + 1 < height && input[(i + d) * (width + 1) + j] < cur_height {
+                d += 1;
+            }
+            scenic_score *= d;
+            best_scenic_score = best_scenic_score.max(scenic_score);
+        }
+    }
+    out(best_scenic_score.to_string());
 }
