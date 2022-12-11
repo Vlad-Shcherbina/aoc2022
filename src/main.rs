@@ -8,6 +8,7 @@ mod day02;
 mod day03;
 mod day04;
 mod day05;
+mod day06;
 
 const ACCOUNTS: &[&str] = &["gh", "sk"];
 #[allow(clippy::type_complexity)]
@@ -17,6 +18,7 @@ const SOLVERS: &[(i32, fn(&str, &mut dyn FnMut(String)))] = &[
     (3, day03::solve),
     (4, day04::solve),
     (5, day05::solve),
+    (6, day06::solve),
 ];
 
 fn run(task_to_run: i32, generate: bool) {
