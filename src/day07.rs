@@ -1,7 +1,7 @@
-use std::collections::HashMap;
+use fxhash::FxHashMap as HashMap;
 
 pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
-    let mut dir_sizes: HashMap<String, i32> = HashMap::new();
+    let mut dir_sizes: HashMap<String, i32> = HashMap::default();
 
     let mut cwd = None;
     let mut lines = input.split_terminator('\n').peekable();
