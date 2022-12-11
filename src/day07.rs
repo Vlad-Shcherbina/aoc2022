@@ -47,4 +47,13 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
         }
     }
     out(result.to_string());
+    let total = dir_sizes["/"];
+    let mut sizes: Vec<i32> = dir_sizes.values().copied().collect();
+    sizes.sort_unstable();
+    for size in sizes {
+        if total - size <= 70_000_000 - 30_000_000 {
+            out(size.to_string());
+            break;
+        }
+    }
 }
