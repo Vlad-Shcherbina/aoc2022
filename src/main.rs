@@ -30,7 +30,7 @@ const SOLVERS: &[(i32, fn(&str, &mut dyn FnMut(String)))] = &[
 ];
 
 fn run(task_to_run: i32, generate: bool) {
-    log::set_boxed_logger(Box::new(logger::TimeDeltaLogger::default())).unwrap();
+    log::set_boxed_logger(Box::<logger::TimeDeltaLogger>::default()).unwrap();
     log::set_max_level(log::LevelFilter::Info);
 
     for &(task, solve) in SOLVERS {
@@ -39,8 +39,8 @@ fn run(task_to_run: i32, generate: bool) {
         }
         for acc in ACCOUNTS {
             log::info!("Day {:02}, {}", task, acc);
-            let input_path = format!("data/{}/{:02}.in", acc, task);
-            let output_path = format!("data/{}/{:02}.out", acc, task);
+            let input_path = format!("data/{acc}/{task:02}.in");
+            let output_path = format!("data/{acc}/{task:02}.out");
             if !std::fs::try_exists(&input_path).unwrap() {
                 continue;
             }
@@ -78,14 +78,14 @@ fn bench(tasks: &[i32]) {
             continue;
         }
         for acc in ACCOUNTS {
-            let input_path = format!("data/{}/{:02}.in", acc, task);
-            let output_path = format!("data/{}/{:02}.out", acc, task);
+            let input_path = format!("data/{acc}/{task:02}.in");
+            let output_path = format!("data/{acc}/{task:02}.out");
             if !std::fs::try_exists(&input_path).unwrap() ||
                !std::fs::try_exists(&output_path).unwrap() {
                 continue;
             }
 
-            print!("{:02} {:>5}", task, acc);
+            print!("{task:02} {acc:>5}");
             let input = std::fs::read_to_string(input_path).unwrap();
             let expected_output = std::fs::read_to_string(output_path).unwrap();
 
@@ -100,7 +100,7 @@ fn bench(tasks: &[i32]) {
             times.push(start.elapsed());
 
             assert_eq!(output, expected_output);
-            println!("    {:?}", times);
+            println!("    {times:?}");
         }
     }
 }
