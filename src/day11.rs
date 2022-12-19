@@ -34,6 +34,7 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
     for m in &monkeys {
         product *= m.div;
     }
+    let mut tmp: Vec<i64> = vec![];
     for part in [1, 2] {
         let mut monkeys = monkeys.clone();
         let mut inspect_cnts: Vec<usize> = vec![0; monkeys.len()];
@@ -47,9 +48,10 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
                     if_true,
                     if_false,
                 } = monkeys[i];
-                let items = std::mem::take(items);
                 inspect_cnts[i] += items.len();
-                for mut item in items {
+                assert!(tmp.is_empty());
+                std::mem::swap(items, &mut tmp);
+                for mut item in tmp.drain(..) {
                     item = op.apply(item);
                     if part == 1 {
                         item /= 3;
