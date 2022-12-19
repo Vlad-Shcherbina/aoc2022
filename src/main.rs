@@ -15,6 +15,19 @@ mod day09;
 mod day10;
 mod day11;
 mod day12;
+mod day13;
+mod day14;
+mod day15;
+mod day16;
+mod day17;
+mod day18;
+mod day19;
+mod day20;
+mod day21;
+mod day22;
+mod day23;
+mod day24;
+mod day25;
 
 const ACCOUNTS: &[&str] = &["gh", "sk"];
 #[allow(clippy::type_complexity)]
@@ -31,6 +44,19 @@ const SOLVERS: &[(i32, fn(&str, &mut dyn FnMut(String)))] = &[
     (10, day10::solve),
     (11, day11::solve),
     (12, day12::solve),
+    (13, day13::solve),
+    (14, day14::solve),
+    (15, day15::solve),
+    (16, day16::solve),
+    (17, day17::solve),
+    (18, day18::solve),
+    (19, day19::solve),
+    (20, day20::solve),
+    (21, day21::solve),
+    (22, day22::solve),
+    (23, day23::solve),
+    (24, day24::solve),
+    (25, day25::solve),
 ];
 
 fn run(task_to_run: i32, generate: bool) {
