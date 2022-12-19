@@ -15,15 +15,18 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
     let mut frontier = vec![(end_x, end_y)];
     visited[end] = true;
     let mut dist = 0;
-    loop {
+    let mut part2 = None;
+    while !frontier.is_empty() {
         let mut new_frontier = vec![];
         for (x, y) in frontier {
             let i = y * w + x;
             if i == start {
                 out(dist.to_string());
-                return;
             }
             let cur = input[i];
+            if cur == b'a' && part2.is_none() {
+                part2 = Some(dist);
+            }
             if x > 0 && input[i - 1] >= cur - 1 && !visited[i - 1] {
                 visited[i - 1] = true;
                 new_frontier.push((x - 1, y));
@@ -44,4 +47,5 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
         frontier = new_frontier;
         dist += 1;
     }
+    out(part2.unwrap().to_string());
 }
