@@ -1,12 +1,15 @@
 pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
     let mut lines = input.lines();
     let mut sum = 0;
+    let mut all_packets = vec![];
     for idx in 1.. {
         let v1 = Value::parse(lines.next().unwrap());
         let v2 = Value::parse(lines.next().unwrap());
         if v1 < v2 {
             sum += idx;
         }
+        all_packets.push(v1);
+        all_packets.push(v2);
         match lines.next() {
             None => break,
             Some("") => {}
@@ -14,6 +17,12 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
         }
     }
     out(sum.to_string());
+
+    let divider1 = Value::List(vec![Value::List(vec![Value::Num(2)])]);
+    let idx1 = all_packets.iter().filter(|p| p < &&divider1).count();
+    let divider2 = Value::List(vec![Value::List(vec![Value::Num(6)])]);
+    let idx2 = all_packets.iter().filter(|p| p < &&divider2).count();
+    out(((idx1 + 1) * (idx2 + 2)).to_string());
 }
 
 enum Value {
