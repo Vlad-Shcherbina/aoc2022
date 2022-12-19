@@ -8,7 +8,7 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
             .parse().unwrap();
         assert_eq!(n, monkeys.len());
         let line = it.next().unwrap();
-        let items: Vec<i32> = line.strip_prefix("  Starting items: ").unwrap()
+        let items: Vec<i64> = line.strip_prefix("  Starting items: ").unwrap()
             .split(", ").map(|s| s.parse().unwrap())
             .collect();
         let line = it.next().unwrap();
@@ -30,47 +30,60 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
             Some(s) => assert_eq!(s, ""),
         }
     }
-    let mut inspect_cnts: Vec<usize> = vec![0; monkeys.len()];
-    for _ in 0..20 {
-        for i in 0..monkeys.len() {
-            let Monkey {
-                ref mut items,
-                op,
-                div,
-                if_true,
-                if_false,
-            } = monkeys[i];
-            let items = std::mem::take(items);
-            inspect_cnts[i] += items.len();
-            for mut item in items {
-                item = op.apply(item);
-                item /= 3;
-                if item % div == 0 {
-                    monkeys[if_true].items.push(item);
-                } else {
-                    monkeys[if_false].items.push(item);
+    let mut product = 1;
+    for m in &monkeys {
+        product *= m.div;
+    }
+    for part in [1, 2] {
+        let mut monkeys = monkeys.clone();
+        let mut inspect_cnts: Vec<usize> = vec![0; monkeys.len()];
+        let num_rounds = if part == 1 { 20 } else { 10_000 };
+        for _ in 0..num_rounds {
+            for i in 0..monkeys.len() {
+                let Monkey {
+                    ref mut items,
+                    op,
+                    div,
+                    if_true,
+                    if_false,
+                } = monkeys[i];
+                let items = std::mem::take(items);
+                inspect_cnts[i] += items.len();
+                for mut item in items {
+                    item = op.apply(item);
+                    if part == 1 {
+                        item /= 3;
+                    } else {
+                        item %= product;
+                    }
+                    if item % div == 0 {
+                        monkeys[if_true].items.push(item);
+                    } else {
+                        monkeys[if_false].items.push(item);
+                    }
                 }
             }
         }
+        inspect_cnts.sort_unstable();
+        inspect_cnts.reverse();
+        let monkey_business = inspect_cnts[0] * inspect_cnts[1];
+        out(monkey_business.to_string());
     }
-    inspect_cnts.sort_unstable();
-    inspect_cnts.reverse();
-    let monkey_business = inspect_cnts[0] * inspect_cnts[1];
-    out(monkey_business.to_string());
 }
 
+#[derive(Clone)]
 struct Monkey {
-    items: Vec<i32>,
+    items: Vec<i64>,
     op: Op,
-    div: i32,
+    div: i64,
     if_true: usize,
     if_false: usize,
 }
 
 #[derive(Clone, Copy)]
 enum Op {
-    Add(i32),
-    Mul(i32),
+    Add(i64),
+    Mul(i64),
     Sqr,
 }
 
@@ -87,7 +100,7 @@ impl Op {
         }
     }
 
-    fn apply(&self, old: i32) -> i32 {
+    fn apply(&self, old: i64) -> i64 {
         match self {
             Op::Add(n) => old + n,
             Op::Mul(n) => old * n,
