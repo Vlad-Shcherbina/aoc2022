@@ -13,12 +13,12 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
     let mut visited = vec![false; input.len()];
 
     let mut frontier = vec![(end_x, end_y)];
+    let mut new_frontier = vec![];
     visited[end] = true;
     let mut dist = 0;
     let mut part2 = None;
     while !frontier.is_empty() {
-        let mut new_frontier = vec![];
-        for (x, y) in frontier {
+        for (x, y) in frontier.drain(..) {
             let i = y * w + x;
             if i == start {
                 out(dist.to_string());
@@ -44,7 +44,7 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
                 new_frontier.push((x, y + 1));
             }
         }
-        frontier = new_frontier;
+        std::mem::swap(&mut frontier, &mut new_frontier);
         dist += 1;
     }
     out(part2.unwrap().to_string());
