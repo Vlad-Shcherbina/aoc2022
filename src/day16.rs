@@ -33,26 +33,31 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
             }
         }
     }
-    fn rec(cur: usize, t: i32, open: &mut [bool], flow_rates: &[i32], dist: &[i32]) -> i32 {
-        let n = open.len();
-        let mut best = 0;
-        for i in 0..n {
-            if open[i] || flow_rates[i] == 0 {
+    let mut nonzero = vec![];
+    for (i, &flow) in flow_rates.iter().enumerate() {
+        if flow > 0 {
+            nonzero.push(i);
+        }
+    }
+    let mut best = vec![0i32; 1 << nonzero.len()];
+    #[allow(clippy::too_many_arguments)]
+    fn rec(cur: usize, t: i32, mask: usize, acc: i32, flow_rates: &[i32], dist: &[i32], nonzero: &[usize], best: &mut [i32]) {
+        let n = flow_rates.len();
+        for (i, &valve) in nonzero.iter().enumerate() {
+            if (mask >> i) & 1 != 0 {
                 continue;
             }
-            let t2 = t - dist[cur * n + i] - 1;
+            let t2 = t - dist[cur * n + valve] - 1;
             if t2 <= 0 {
                 continue;
             }
-            open[i] = true;
-            let q = rec(i, t2, open, flow_rates, dist) + t2 * flow_rates[i];
-            best = best.max(q);
-            open[i] = false;
+            let score = acc + t2 * flow_rates[valve];
+            best[mask] = best[mask].max(score);
+            rec(valve, t2, mask | (1 << i), score, flow_rates, dist, nonzero, best);
         }
-        best
     }
     let start = names.iter().position(|&name| name == "AA").unwrap();
-    let mut open = vec![false; n];
-    let res = rec(start, 30, &mut open, &flow_rates, &dist);
-    out(res.to_string());
+    rec(start, 30, 0, 0, &flow_rates, &dist, &nonzero, &mut best);
+    let part1 = best.iter().max().unwrap();
+    out(part1.to_string());
 }
