@@ -51,13 +51,28 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
             if t2 <= 0 {
                 continue;
             }
-            let score = acc + t2 * flow_rates[valve];
-            best[mask] = best[mask].max(score);
-            rec(valve, t2, mask | (1 << i), score, flow_rates, dist, nonzero, best);
+            let acc2 = acc + t2 * flow_rates[valve];
+            let mask2 = mask | (1 << i);
+            best[mask2] = best[mask2].max(acc2);
+            rec(valve, t2, mask2, acc2, flow_rates, dist, nonzero, best);
         }
     }
     let start = names.iter().position(|&name| name == "AA").unwrap();
     rec(start, 30, 0, 0, &flow_rates, &dist, &nonzero, &mut best);
     let part1 = best.iter().max().unwrap();
     out(part1.to_string());
+
+    best.fill(0);
+    rec(start, 26, 0, 0, &flow_rates, &dist, &nonzero, &mut best);
+    let mut part2 = 0;
+    for (mask1, &score1) in best.iter().enumerate() {
+        for (mask2, &score2) in best.iter().enumerate() {
+            if mask1 & mask2 != 0 {
+                continue;
+            }
+            let score = score1 + score2;
+            part2 = part2.max(score);
+        }
+    }
+    out(part2.to_string());
 }
