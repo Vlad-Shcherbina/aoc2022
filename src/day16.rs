@@ -48,16 +48,17 @@ pub(crate) fn solve(input: &str, out: &mut dyn FnMut(String)) {
 
     best.fill(0);
     rec(start, 26, 0, 0, &flow_rates, &dist, &nonzero, &mut best);
-    let mut part2 = 0;
-    for (mask1, &score1) in best.iter().enumerate() {
-        for (mask2, &score2) in best.iter().enumerate() {
-            if mask1 & mask2 != 0 {
-                continue;
+    let mut inv = best.clone();
+    inv.reverse();
+    for i in 0..nonzero.len() {
+        for mask in 0 .. 1 << nonzero.len() {
+            let mask2 = mask | (1 << i);
+            if mask2 != mask {
+                inv[mask] = inv[mask].max(inv[mask2]);
             }
-            let score = score1 + score2;
-            part2 = part2.max(score);
         }
     }
+    let part2 = best.iter().zip(inv.iter()).map(|(&a, &b)| a + b).max().unwrap();
     out(part2.to_string());
 }
 
